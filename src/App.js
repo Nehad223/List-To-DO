@@ -1,23 +1,54 @@
-import React, { createContext, useState } from 'react';
-import {Routes,Route} from 'react-router-dom';
-import Header from './Components/Header/Header.js'
-import Main from './Components/Meals/Meals.js'
-import DataCustomer from './Components/DataCustomer/DataCustomer.js';
-export const CounterContext = createContext(); 
-
+import { useRef, useState } from 'react';
+import './App.css';
 function App() {
-  const [count, setCount] = useState([]); 
+  const[todos,setTodos]=useState([]);
+  const ref=useRef();
 
+  const handleadd=()=>{
+    const text=ref.current.value;
+    const newItem={completed:false,text:text}
+    if(text!=""){
+    setTodos([...todos,newItem]);
+    ref.current.value="";
+  }}
+  const handleitemdone=(index)=>{
+    const newtodos=[...todos];
+    newtodos[index].completed= !newtodos[index].completed;
+    setTodos(newtodos);
+  }
+  const handledelete=(index)=>{
+    const newtodos=[...todos];
+    newtodos.splice(index,1);
+    setTodos(newtodos);
+
+
+
+  }
   return (
-    <CounterContext.Provider value={{ count, setCount }}>
-      <div className="app">
-        <Header /> 
-   <Routes>
-    <Route path='/' element={<Main/>}></Route>
-    <Route path='dataCustomer' element={<DataCustomer/>} ></Route>
-   </Routes>
+    <div className="App">
+      <h2>List To Do :</h2>
+      <div className='to-do-container'>
+         <ul>
+        {todos.map((item,itemIndex)=>(<div>
+          <div className='item'>
+          <li  className={item.completed ? "done":""}  onClick={()=>handleitemdone(itemIndex)} key={itemIndex}>
+            {item.text} 
+           
+          </li>  
+          <span onClick={()=>handledelete(itemIndex)}>❌</span>
+
+          </div>
+          
+        </div>))}
+
+      </ul>
+      
       </div>
-    </CounterContext.Provider>
+      <input type='text' placeholder='input item' ref={ref} />
+      <button onClick={handleadd}>add</button>
+     
+              
+    </div>
   );
 }
 
